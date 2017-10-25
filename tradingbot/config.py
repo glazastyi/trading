@@ -1,0 +1,8 @@
+API_URl =  "api.livecoin.net"
+SATOSHI = 10 ** (-8)
+NUMBER_OF_PAIRS = 20
+INCOME = 1.02
+MAX_TIME = 60 * 60 * 36
+COMMISSION = 0.0018
+
+EXCLUSION_CURRENCY = ["USD","RUR","EUR","BTC"]
