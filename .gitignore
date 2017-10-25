@@ -101,4 +101,4 @@ ENV/
 .mypy_cache/
 
 #keys
-keys.txt
+tradingbot/keys.txt
