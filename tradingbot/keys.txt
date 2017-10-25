@@ -1,2 +1,2 @@
-gq8sVb48RwHeDjc1f1cNUtDA5HN2Sepe
-9myVdvj5MHEADBQpP8HY9AqByJnBC4dg
+api_key
+secret_key
