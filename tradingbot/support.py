@@ -102,11 +102,11 @@ def get_pairs(number, exception):
 
 def get_nonzero_balances():
     data = get_data("/payment/balances", [])
-    filtered_data = []
+    filtered_data = {}
     for el in data:
         if el["type"] == "total" and el["value"] != 0 and el[
             "currency"] not in config.EXCLUSION_CURRENCY:
-            filtered_data.append("%s/BTC" % el["currency"])
+            filtered_data["%s/BTC" % el["currency"]] = float(el["value"])
     return filtered_data
 
 

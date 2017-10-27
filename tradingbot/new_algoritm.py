@@ -82,7 +82,8 @@ def buy():
     print difference
     if difference >0:
         print "buyng"
-        pairs = support.get_pairs(difference, support.get_nonzero_balances())
+        pairs = support.get_pairs(difference,
+                                  support.get_nonzero_balances().keys())
         balance = float(support.get_balance("BTC"))  - config.SATOSHI
         count = difference
         print "balance = %s" % balance
