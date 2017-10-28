@@ -7,6 +7,7 @@ import hmac
 from collections import OrderedDict
 import config
 import time
+import database
 
 
 def get_data(method, *args):
@@ -170,3 +171,26 @@ def get_keys():
         keys = keys_file.readlines()
         keys[0] = keys[0][:-1]
     return keys
+
+
+def make_order(type, pair,price,quantity):
+    type_of_action = {"buy":"/exchange/buylimit", "sell":"/exchange/selllimit"}
+    order = post_data(type_of_action[type],[('currencyPair', pair),('price', price),('quantity', quantity)])
+    return order
+
+def get_purchase_price(value):
+    return round((value + config.OVER_BURSE) * (1 + config.COMMISSION),8)
+
+def get_sell_price(currency):
+    tmp = get_data("/exchange/ticker",[("currencyPair", "%s/BTC" % currency)])
+    return round((float(tmp["best_ask"]) - config.OVER_BURSE) / (1 + config.COMMISSION),8)
+
+def get_sold_volume(currency, sell_price):
+    volume = database.select(["sum(purchased_quantity - sold_quantity)"],
+                    ["symbol == ", "purchase_price <=", "result == "],
+                    ("'%s/BTC'" % currency, sell_price / config.INCOME, 0))
+    if volume[0][0] == None:
+        result = 0
+    else:
+        result = volume[0][0]
+    return result
