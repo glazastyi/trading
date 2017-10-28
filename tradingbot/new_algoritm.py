@@ -5,56 +5,65 @@ import database
 import config
 import collections
 
-def close_orders():
-    print "try to close orders"
-    """Закрываю открытые ордера"""
-    # считываю выставленные ордера
-    orders = []
-    with open("orders_buffer.txt", "r") as file:
-        orders = file.readlines()
-    # обновляю информацию в базе данных
+def get_successful_orders(orders):
+    return_orders = [[],[]]
     for order in orders:
+        type_of_order = order[:1]
+        order_num = order[1:-1]
+        info = support.get_data("/exchange/order", [("orderId", order_num)])
+        print info
+        quantity = float(info["quantity"]) - float(info["remaining_quantity"])
+        if quantity > 0.0:
+            return_orders[type_of_order == "S"].append(order_num)
+    return return_orders
 
-        info = support.get_data("/exchange/order", [("orderId", order[1:-1])])
+def close_sell_orders(orders):
+    """
+    главный поступат - не покупаем валюту пока ее не продали
+    :param orders: 
+    :return: 
+    """
+    for order in orders:
+        info = support.get_data("/exchange/order", [("orderId", order)])
+        quantity = float(info["quantity"]) - float(info["remaining_quantity"])
+        print info
+        symbol = info["symbol"]
+        price = float(info["price"])
+        cond = float(info["price"]) / config.INCOME
+
+        el = database.select(
+            ["id", "purchased_quantity", "sold_quantity", "profit"],
+            ["symbol == ", "result == "],
+            ("'%s'" % symbol,0))
+        el = el[0]
+        print el
+        purchased_quantity = float(el[1])
+        sold_quantity = float(el[2])
+        profit = float(el[3])
+        remaining_quantity = purchased_quantity - sold_quantity
+        database.update(["sold_quantity", "profit","result"],
+                            (sold_quantity + quantity,
+                             profit + quantity * price,
+                             int(remaining_quantity == quantity)),
+                            ["id == "], (el[0],))
+
+def close_buy_orders(orders):
+    for order in orders:
+        info = support.get_data("/exchange/order", [("orderId", order)])
         quantity = float(info["quantity"]) - float(info["remaining_quantity"])
 
         symbol = info["symbol"]
         price = float(info["price"])
-        # для купленных денег делаю запись в бд
-        print order[0]
-        if order[0] == "B":
-            print quantity > 0.0
-            if quantity > 0.0:
-                database.insert(order[1:-1], time.time(), symbol, quantity, price)
+        database.insert(order, time.time(), symbol, quantity, price)
 
-        if order[0] == "S":
-            # нужно выбрать все купленные пары и закрывать их постепенно
-            # нужно выбрать те которые покупались с учетом выгоды
-            cond = float(info["price"]) / config.INCOME
+def close_orders():
+    with open("orders_buffer.txt", "r") as file:
+        orders = file.readlines()
 
-            update_list = database.select(["id", "purchased_quantity", "sold_quantity", "profit"],
-                                          ["symbol == ","purchase_price <= ", "result == "], ("'%s'"%symbol,cond,0))
-
-
-
-            print "here", update_list
-            for el in update_list:
-                balance = float(el[1]) - float(el[2])
-                profit = float(el[3])
-                print quantity, float(el[2]),profit,price
-                if balance > quantity:
-                    database.update(["sold_quantity", "profit"],
-                                    (float(el[2]) + quantity,profit + quantity * price),
-                                    ["id == "], (el[0],))
-                else:
-                    quantity -= balance
-                    database.update(["sold_quantity", "profit", "end_time", "result"],
-                                    (float(el[1]), profit + quantity * price, time.time(), 1),
-                                    ["id == "], (el[0],))
-
-        # закрываю ордер
-        support.post_data("/exchange/cancellimit", [("currencyPair", symbol), ("orderId", order[1:-1])])
-    print "clearing order buffer"
+    successful_orders = get_successful_orders(orders)
+    print successful_orders
+    close_buy_orders(successful_orders[0])
+    close_sell_orders(successful_orders[1])
     with open("orders_buffer.txt", "w") as file:
         print "hi"
 
