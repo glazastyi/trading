@@ -12,14 +12,12 @@ def close_orders():
     orders = []
     with open("orders_buffer.txt", "r") as file:
         orders = file.readlines()
-    print orders
     # обновляю информацию в базе данных
     for order in orders:
 
         info = support.get_data("/exchange/order", [("orderId", order[1:-1])])
-        print info
         quantity = float(info["quantity"]) - float(info["remaining_quantity"])
-        print quantity
+
         symbol = info["symbol"]
         price = float(info["price"])
         # для купленных денег делаю запись в бд

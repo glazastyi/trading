@@ -8,4 +8,4 @@ class Currency_pair(object):
     def set_prices(self):
         pass
 
-class Exchanger(object)
+class Exchanger(object):
