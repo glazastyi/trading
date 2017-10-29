@@ -86,3 +86,119 @@ def get_exchange_trades(*args):
     :return: 
     """
     pass
+
+def get_exchange_client_orders(*args):
+    """
+    По конкретному клиенту и по конкретной паре валют получить полную информацию
+     о его ордерах, информация может быть ограничена
+     либо только открытые либо только закрытые ордера.
+    :param args: 
+    :return: 
+    """
+    pass
+
+def get_exchange_order(orderId):
+    """
+    Получить информацию об ордере по его ID
+    :param orderId: 
+    :return: 
+    """
+    pass
+
+def get_payment_balances(*args):
+    """
+    Возвращает массив с балансами пользователя. Для каждой валюты существует
+    4 типа балансов: общий (total),
+    доступные для торговли средства (available),
+    средства в открытых ордерах (trade),
+    доступный для вывода (available_withdrawal)
+    :param args: 
+    :return: 
+    """
+    pass
+
+def get_payment_balance(*args):
+    """
+    Возвращает доступный баланс для выбранной валюты
+    :param args: 
+    :return: 
+    """
+    pass
+
+def get_payment_history_transactions(start, end, *args):
+    """
+    Возвращает список транзакций пользователя
+    :param start: 
+    :param end: 
+    :return: 
+    """
+    pass
+
+def get_payment_history_size(start, end, *args):
+    """
+    Возвращает количество транзакций пользователя с заданными параметрами
+    :param start: 
+    :param end: 
+    :param args: 
+    :return: 
+    """
+    pass
+
+def get_exchange_commission():
+    """
+    Возвращает текущую комиссию пользователя
+    :return: 
+    """
+def get_exchange_commissionCommonInfo():
+    """
+    Возвращает текущую комиссию пользователя
+     и объем торгов в USD за последние 30 дней
+    :return: 
+    """
+    pass
+
+def post_exchange_buylimit(currencyPair, price, quantity):
+    """
+    Открыть ордер (лимитный) на покупку, определенной валюты.
+    :param currencyPair: 
+    :param price: 
+    :param quantity: 
+    :return: 
+    """
+    pass
+def post_exchange_selllimit(currencyPair, price, quantity):
+    """
+    Открыть ордер (лимитный) на продажу определенной валюты. 
+    Доп.параметры аналогично покупки.
+
+    :param currencyPair: 
+    :param price: 
+    :param quantity: 
+    :return: 
+    """
+    pass
+
+def post_exchange_buymarket(currencyPair, quantity):
+    """
+    Открыть ордер(рыночный) на покупку определенной валюты на заданное количество.
+    :return: 
+    """
+    pass
+
+def post_exchange_sellmarket(currencyPair, quantity):
+    """
+    Открыть ордер(рыночный) на продажу определенной валюты на заданное количество.
+    :param currencyPair: 
+    :param quantity: 
+    :return: 
+    """
+    pass
+
+def post_exchange_cancellimit(currencyPair, orderId):
+    """
+    Отменить ордер (лимитный).
+    :param currencyPair: 
+    :param orderId: 
+    :return: 
+    """
+    pass
