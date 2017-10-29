@@ -1,5 +1,5 @@
 # Altcoin Trading bot
-
+### it's not even a MVP
 [![Build Status][travis-badge]][travis-url]
 [![Coverage][coverage-image]][coverage-url]
 
