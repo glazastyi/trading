@@ -194,3 +194,10 @@ def get_sold_volume(currency, sell_price):
     else:
         result = volume[0][0]
     return result
+
+def get_num_of_pairs(balance):
+    result = config.NUMBER_OF_PAIRS
+    if balance / (10 ** (-4)) < config.NUMBER_OF_PAIRS:
+        count = int(balance / (10 ** (-4)))
+        result = count
+    return result
