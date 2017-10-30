@@ -87,6 +87,7 @@ def get_pairs(number, exception):
     """
     pairs = [el for el in get_data("/exchange/ticker") if
              "/BTC" in el["symbol"] and el["best_bid"] > 10 ** (-6)]
+
     pairs = sorted(pairs, key=lambda el: get_rank(el), reverse=True)
     tmp = []
     for i, el in enumerate(pairs):

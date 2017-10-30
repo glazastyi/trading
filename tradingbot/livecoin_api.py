@@ -1,5 +1,77 @@
 # -*- coding: utf-8 -*-codung
+import httplib
+import urllib
+import json
+import hashlib
+import hmac
+from collections import OrderedDict
+from collections import namedtuple
+import config
+import time
+import support
+import database
+def delete_after(result):
+    return " ".join(map(str, set(result)))
+
+def get_data(method, *args):
+    """
+    :param method: 
+    :param args: 
+    :return: 
+    """
+    time.sleep(1)
+
+    server = config.API_URl
+    keys = support.get_keys()
+    api_key = keys[0]
+    secret_key = keys[1]
+
+
+    data = OrderedDict(args)
+
+    encoded_data = urllib.urlencode(data)
+    sign = hmac.new(secret_key, msg=encoded_data,
+                    digestmod=hashlib.sha256).hexdigest().upper()
+    headers = {"Api-key": api_key, "Sign": sign}
+
+    conn = httplib.HTTPSConnection(server)
+    conn.request("GET", method + '?' + encoded_data, '', headers)
+
+    response = conn.getresponse()
+    data = json.load(response)
+    conn.close()
+    return data
+
+
+def post_data(method, *args):
+    """
+
+    :param method: 
+    :param args: 
+    :return: 
+    """
+    time.sleep(1)
+    server = config.API_URl
+    keys = get_keys()
+    api_key = keys[0]
+    secret_key = keys[1]
+
+    data = OrderedDict(args)
+    encoded_data = urllib.urlencode(data)
+    sign = hmac.new(secret_key, msg=encoded_data,
+                    digestmod=hashlib.sha256).hexdigest().upper()
+    headers = {"Api-key": api_key, "Sign": sign,
+               "Content-type": "application/x-www-form-urlencoded"}
+
+    conn = httplib.HTTPSConnection(server)
+    conn.request("POST", method, encoded_data, headers)
+    response = conn.getresponse()
+    data = json.load(response)
+    conn.close()
+    return data
+
 def get_exchange_ticker(*args):
+
     """
     Получить информацию за последние 24 часа по конкретной паре валют.
     В ответе есть следующие поля:
@@ -8,7 +80,19 @@ def get_exchange_ticker(*args):
     :param args: 
     :return: 
     """
-    pass
+
+    Exchange_ticker = namedtuple("Exchange_ticker", """high best_bid last cur 
+                    symbol best_ask vwap max_bid volume low min_ask""")
+
+    result = get_data("/exchange/ticker",*args)
+    if len(args):
+        result = [result]
+
+    Exchange_ticker = namedtuple("Exchange_ticker", "%s"%delete_after(result[
+                                                                          0]))
+
+    return map(lambda x: Exchange_ticker(**x),result)
+
 
 def get_exchange_last_trades(currencyPair, *args):
     """
