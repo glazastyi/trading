@@ -11,12 +11,9 @@ import support
 import hashlib
 from collections import OrderedDict
 from collections import namedtuple
+
 import livecoin_api
-tmp =  livecoin_api.get_exchange_ticker()
-tmp1 =  livecoin_api.get_exchange_ticker(("currencyPair","BTC/USD"))
+tmp =  livecoin_api.get_exchange_commissionCommonInfo()
 
 for el in tmp:
-    print el.high
-print "HJH"
-for el in tmp1:
-    print el.high
+   print el
