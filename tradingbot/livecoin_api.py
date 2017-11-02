@@ -1,17 +1,19 @@
-# -*- coding: utf-8 -*-codung
+# -*- coding: utf-8 -*-
 import httplib
 import urllib
 import json
 import hashlib
 import hmac
-from collections import OrderedDict
-from collections import namedtuple
 import config
 import time
 import support
-import database
-def delete_after(result):
+from collections import OrderedDict
+from collections import namedtuple
+
+
+def get_namedtuple(result):
     return " ".join(map(str, set(result)))
+
 
 def get_data(method, *args):
     """
@@ -25,7 +27,6 @@ def get_data(method, *args):
     keys = support.get_keys()
     api_key = keys[0]
     secret_key = keys[1]
-
 
     data = OrderedDict(args)
 
@@ -70,62 +71,64 @@ def post_data(method, *args):
     conn.close()
     return data
 
-def get_exchange_ticker(*args):
 
+def get_exchange_ticker(*args):
     """
     Получить информацию за последние 24 часа по конкретной паре валют.
     В ответе есть следующие поля:
-        max_bid, min_ask - максимальный бид и минимальный аск за последние 24 часа
+        max_bid, min_ask - макс бид и мин аск за последние 24 часа
         best_bid, best_ask - лучшие текущие бид и аск
     :param args: 
     :return: 
     """
-    result = get_data("/exchange/ticker",*args)
+    result = get_data("/exchange/ticker", *args)
     if len(args):
         result = [result]
 
-    Exchange_ticker = namedtuple("Exchange_ticker", "%s"%delete_after(result[
-                                                                          0]))
+    Exchange_ticker = namedtuple("Exchange_ticker",
+                                 "%s" % get_namedtuple(result[
+                                                           0]))
 
-    return map(lambda x: Exchange_ticker(**x),result)
+    return map(lambda x: Exchange_ticker(**x), result)
 
 
-def get_exchange_last_trades(currencyPair, *args):
+def get_exchange_last_trades(currency_pair, *args):
     """
-    Получить информацию о последних сделках (транзакциях) по заданной паре валют.
+    Получить информацию о последних сделках (транзакциях) по заданной паре валют
     Информацию можно получить либо за последний час либо за последнюю минуту.
     
-    :param currencyPair: 
+    :param currency_pair: 
     :param args: 
     :return: 
     """
 
-    result = get_data("/exchange/last_trades",("currencyPair",
-                                               currencyPair),*args)
+    result = get_data("/exchange/last_trades", ("currencyPair",
+                                                currency_pair), *args)
 
     Exchange_last_trades = namedtuple("Exchange_last_trades", "%s"
-                                      % delete_after(result[0]))
+                                      % get_namedtuple(result[0]))
 
     return map(lambda x: Exchange_last_trades(**x), result)
 
 
-def get_exchange_order_book(currencyPair, *args):
+def get_exchange_order_book(currency_pair, *args):
     """
     Получить ордера по выбранной паре (можно установить признак
      группировки ордеров по ценам)
-    :param currencyPair: 
+    :param currency_pair: 
     :param args: 
     :return: 
     """
     result = get_data("/exchange/order_book", ("currencyPair",
-                                                currencyPair), *args)
+                                               currency_pair), *args)
 
     Exchange_order_book = namedtuple("Exchange_order_book", "%s"
-                                      % delete_after(result))
+                                     % get_namedtuple(result))
 
     return map(lambda x: Exchange_order_book(**x), [result])
 
-#problem
+
+# problem
 def get_exchange_all_order_book(*args):
     """
     Возвращает ордербук по каждой валютной паре
@@ -143,6 +146,7 @@ def get_exchange_maxbid_minask(*args):
     """
     pass
 
+
 def get_exchange_restrictions(*args):
     """
     Возвращает ограничения по каждой паре по мин. размеру ордера и максимальному
@@ -151,6 +155,7 @@ def get_exchange_restrictions(*args):
     :return: 
     """
     pass
+
 
 def get_info_coinInfo(*args):
     """
@@ -174,6 +179,7 @@ def get_info_coinInfo(*args):
     """
     pass
 
+
 def get_exchange_trades(*args):
     """
     По конкретному клиенту получить информацию о его последних сделках,
@@ -182,16 +188,18 @@ def get_exchange_trades(*args):
     :return: 
     """
 
-    result = get_data("/exchange/trades",*args)
+    result = get_data("/exchange/trades", *args)
     if len(args):
-     result = [result]
+        result = [result]
 
-    Exchange_trades = namedtuple("Exchange_trades", "%s"%delete_after(result[
-                                                                       0]))
+    Exchange_trades = namedtuple("Exchange_trades",
+                                 "%s" % get_namedtuple(result[
+                                                           0]))
 
-    return map(lambda x: Exchange_trades(**x),result)
+    return map(lambda x: Exchange_trades(**x), result)
 
-#сложно взаимодействие с системой
+
+# сложно взаимодействие с системой
 def get_exchange_client_orders(*args):
     """
     По конкретному клиенту и по конкретной паре валют получить полную информацию
@@ -202,15 +210,16 @@ def get_exchange_client_orders(*args):
     """
     pass
 
-def get_exchange_order(orderId):
+
+def get_exchange_order(order_id):
     """
     Получить информацию об ордере по его ID
-    :param orderId: 
+    :param order_id: 
     :return: 
     """
-    result = get_data("/exchange/trades", ("ordeId",orderId))
+    result = get_data("/exchange/trades", ("ordeId", order_id))
 
-    Exchange_order = namedtuple("Exchange_order", "%s" % delete_after(result[
+    Exchange_order = namedtuple("Exchange_order", "%s" % get_namedtuple(result[
                                                                             0]))
 
     return map(lambda x: Exchange_order(**x), [result])
@@ -228,25 +237,28 @@ def get_payment_balances(*args):
     """
     result = get_data("/payment/balances", *args)
 
-    Payment_balances = namedtuple("Payment_balances", "%s" % delete_after(result[
-                                                                          0]))
+    Payment_balances = namedtuple("Payment_balances",
+                                  "%s" % get_namedtuple(result[
+                                                            0]))
 
     return map(lambda x: Payment_balances(**x), result)
+
 
 def get_payment_balance(currency):
     """
     Возвращает доступный баланс для выбранной валюты
-    :param args: 
+    :param currency: 
     :return: 
     """
-    result = get_data("/payment/balances", ("currency",currency))
+    result = get_data("/payment/balances", ("currency", currency))
 
     Payment_balance = namedtuple("Payment_balance",
-                                  "%s" % delete_after(result[0]))
+                                 "%s" % get_namedtuple(result[0]))
 
     return map(lambda x: Payment_balance(**x), result)
 
-#todo
+
+# todo
 def get_payment_history_transactions(start, end, *args):
     """
     Возвращает список транзакций пользователя
@@ -255,13 +267,15 @@ def get_payment_history_transactions(start, end, *args):
     :return: 
     """
     result = get_data(" /payment/history/transactions", ("start", start),
-                      ("end",end))
-    print result
+                      ("end", end), *args)
+
     Payment_history_transactions = namedtuple("Payment_history_transactions",
-                                 "%s" % delete_after(result[0]))
+                                              "%s" % get_namedtuple(result[0]))
 
     return map(lambda x: Payment_history_transactions(**x), result)
-#todo
+
+
+# todo
 def get_payment_history_size(start, end, *args):
     """
     Возвращает количество транзакций пользователя с заданными параметрами
@@ -272,19 +286,21 @@ def get_payment_history_size(start, end, *args):
     """
     pass
 
+
 def get_exchange_commission():
     """
     Возвращает текущую комиссию пользователя
     :return: 
     """
-    result = get_data("/exchange/commission",)
+    result = get_data("/exchange/commission", )
     print result
     Payment_history_transactions = namedtuple("Payment_history_transactions",
-                                              "%s" % delete_after(result))
+                                              "%s" % get_namedtuple(result))
 
     return map(lambda x: Payment_history_transactions(**x), [result])
 
-def get_exchange_commissionCommonInfo():
+
+def get_exchange_commission_common_info():
     """
     Возвращает текущую комиссию пользователя
      и объем торгов в USD за последние 30 дней
@@ -292,80 +308,89 @@ def get_exchange_commissionCommonInfo():
     """
 
     result = get_data("/exchange/commissionCommonInfo", )
-    Exchange_commissionCommonInfo = namedtuple("Payment_history_transactions",
-                                              "%s" % delete_after(result))
+    Exchange_commission_common_info = namedtuple("Payment_history_transactions",
+                                                 "%s" % get_namedtuple(result))
 
-    return map(lambda x: Exchange_commissionCommonInfo(**x), [result])
+    return map(lambda x: Exchange_commission_common_info(**x), [result])
 
-def post_exchange_buylimit(currencyPair, price, quantity):
+
+def post_exchange_buy_limit(currency_pair, price, quantity):
     """
     Открыть ордер (лимитный) на покупку, определенной валюты.
-    :param currencyPair: 
+    :param currency_pair: 
     :param price: 
     :param quantity: 
     :return: 
     """
-    result = post_data("/exchange/buylimit",("currencyPair",currencyPair),
-                    ("price",price),("quantity",quantity))
-    Post_exchange_buylimit = namedtuple("Post_exchange_buylimit",
-                                              "%s" % delete_after(result))
+    result = post_data("/exchange/buylimit", ("currencyPair", currency_pair),
+                       ("price", price), ("quantity", quantity))
+    Post_exchange_buy_limit = namedtuple("Post_exchange_buylimit",
+                                         "%s" % get_namedtuple(result))
 
-    return map(lambda x: Post_exchange_buylimit(**x), [result])
+    return map(lambda x: Post_exchange_buy_limit(**x), [result])
 
-def post_exchange_selllimit(currencyPair, price, quantity):
+
+def post_exchange_sell_limit(currency_pair, price, quantity):
     """
     Открыть ордер (лимитный) на продажу определенной валюты. 
     Доп.параметры аналогично покупки.
 
-    :param currencyPair: 
+    :param currency_pair: 
     :param price: 
     :param quantity: 
     :return: 
     """
-    result = post_data("/exchange/selllimit", ("currencyPair", currencyPair),
+    result = post_data("/exchange/selllimit", ("currencyPair", currency_pair),
                        ("price", price), ("quantity", quantity))
-    Post_exchange_selllimit= namedtuple("Post_exchange_buylimit",
-                                        "%s" % delete_after(result))
+    Post_exchange_sell_limit = namedtuple("Post_exchange_buylimit",
+                                          "%s" % get_namedtuple(result))
 
-    return map(lambda x: Post_exchange_selllimit(**x), [result])
+    return map(lambda x: Post_exchange_sell_limit(**x), [result])
 
-def post_exchange_buymarket(currencyPair, quantity):
+
+def post_exchange_buy_market(currency_pair, quantity):
     """
-    Открыть ордер(рыночный) на покупку определенной валюты на заданное количество.
+    Открыть ордер(рыночный)
+     на покупку определенной валюты на заданное количество.
+    :param currency_pair: 
+    :param quantity: 
     :return: 
     """
-    result = post_data("/exchange/buymarket", ("currencyPair", currencyPair),
-                         ("quantity", quantity))
-    Post_exchange_buymarket = namedtuple("Post_exchange_buylimit",
-                                         "%s" % delete_after(result))
+    result = post_data("/exchange/buymarket", ("currencyPair", currency_pair),
+                       ("quantity", quantity))
+    Post_exchange_buy_market = namedtuple("Post_exchange_buylimit",
+                                          "%s" % get_namedtuple(result))
 
-    return map(lambda x: Post_exchange_buymarket(**x), [result])
+    return map(lambda x: Post_exchange_buy_market(**x), [result])
 
-def post_exchange_sellmarket(currencyPair, quantity):
+
+def post_exchange_sell_market(currency_pair, quantity):
     """
-    Открыть ордер(рыночный) на продажу определенной валюты на заданное количество.
-    :param currencyPair: 
+    Открыть ордер(рыночный) на продажу определенной
+     валюты на заданное количество.
+    :param currency_pair: 
     :param quantity: 
     :return: 
     """
 
-    result = post_data("/exchange/sellmarket", ("currencyPair", currencyPair),
+    result = post_data("/exchange/sellmarket", ("currencyPair", currency_pair),
                        ("quantity", quantity))
-    Post_exchange_sellmarket = namedtuple("Post_exchange_sellmarket",
-                                         "%s" % delete_after(result))
+    Post_exchange_sell_market = namedtuple("Post_exchange_sellmarket",
+                                           "%s" % get_namedtuple(result))
 
-    return map(lambda x: Post_exchange_sellmarket(**x), [result])
+    return map(lambda x: Post_exchange_sell_market(**x), [result])
 
-def post_exchange_cancellimit(currencyPair, orderId):
+
+def post_exchange_cancel_limit(currency_pair, order_id):
     """
     Отменить ордер (лимитный).
-    :param currencyPair: 
-    :param orderId: 
+    :param currency_pair: 
+    :param order_id: 
     :return: 
     """
-    result = post_data("/exchange/cancellimit", ("currencyPair", currencyPair),
-                       ("orderId", orderId))
-    Post_exchange_cancellimit = namedtuple("Post_exchange_cancellimit",
-                                          "%s" % delete_after(result))
+    result = post_data("/exchange/cancellimit", ("currencyPair", currency_pair),
+                       ("orderId", order_id))
+    Post_exchange_cancel_limit = namedtuple("Post_exchange_cancellimit",
+                                            "%s" % get_namedtuple(result))
 
-    return map(lambda x: Post_exchange_cancellimit(**x), [result])
+    return map(lambda x: Post_exchange_cancel_limit(**x), [result])
