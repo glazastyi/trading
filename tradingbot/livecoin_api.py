@@ -135,7 +135,15 @@ def get_exchange_all_order_book(*args):
     :param args: 
     :return: 
     """
-    pass
+    data = get_data("/exchange/all/order_book", *args)
+    Exchange_all_order_book = namedtuple("Exchange_order_book", "%s"
+                                         % get_namedtuple(data.values()[0]))
+    result = {}
+    for currency in data:
+        result[currency] = map(lambda x: Exchange_all_order_book(**x),
+                               [data[currency]])
+
+    return result
 
 
 def get_exchange_maxbid_minask(*args):
@@ -144,20 +152,27 @@ def get_exchange_maxbid_minask(*args):
     :param args: 
     :return: 
     """
-    pass
+    data = get_data("/exchange/maxbid_minask", *args)
+    currency_pairs = data.get("currencyPairs")[0]
+    Exchange_maxbid_minask = namedtuple("Exchange_maxbid_minask", "%s"
+                                        % get_namedtuple(currency_pairs[0]))
+
+    result = map(lambda x: Exchange_maxbid_minask(**x), currency_pairs)
+
+    return result
 
 
 def get_exchange_restrictions(*args):
-    """
-    Возвращает ограничения по каждой паре по мин. размеру ордера и максимальному
-     кол-ву знаков после запятой в цене.
-    :param args: 
-    :return: 
-    """
-    pass
+    data = get_data("/exchange/restrictions", *args)
+    restrictions = data.get("restrictions")
+    Exchange_restrictions = namedtuple("Exchange_restrictions", "%s"
+                                       % get_namedtuple(restrictions[0]))
+    result = map(lambda x: Exchange_restrictions(**x), restrictions)
+
+    return result
 
 
-def get_info_coinInfo(*args):
+def get_info_coin_info(*args):
     """
     возвращает общую информацию по критовалютам:
         name - название
@@ -177,7 +192,16 @@ def get_info_coinInfo(*args):
     :param args: 
     :return: 
     """
-    pass
+    data = get_data("/info/coinInfo", *args)
+    info = data.get("info")
+    Info_coin_info = namedtuple("Info_coin_info", "%s" % get_namedtuple(info[
+                                                                            0]))
+    result = map(lambda x: Info_coin_info(**x), info)
+
+    return result
+
+
+# приватные данные пользователя
 
 
 def get_exchange_trades(*args):
@@ -208,7 +232,14 @@ def get_exchange_client_orders(*args):
     :param args: 
     :return: 
     """
-    pass
+
+    data = get_data("/info/coinInfo", *args)
+    info = data.get("info")
+    Exchange_client_orders = namedtuple("Exchange_client_orders", "%s"
+                                        % get_namedtuple(info[0]))
+    result = map(lambda x: Exchange_client_orders(**x), info)
+
+    return result
 
 
 def get_exchange_order(order_id):
@@ -258,7 +289,6 @@ def get_payment_balance(currency):
     return map(lambda x: Payment_balance(**x), result)
 
 
-# todo
 def get_payment_history_transactions(start, end, *args):
     """
     Возвращает список транзакций пользователя
@@ -275,7 +305,6 @@ def get_payment_history_transactions(start, end, *args):
     return map(lambda x: Payment_history_transactions(**x), result)
 
 
-# todo
 def get_payment_history_size(start, end, *args):
     """
     Возвращает количество транзакций пользователя с заданными параметрами
@@ -284,7 +313,9 @@ def get_payment_history_size(start, end, *args):
     :param args: 
     :return: 
     """
-    pass
+    result = get_data(" /payment/history/transactions", ("start", start),
+                      ("end", end), *args)
+    return result
 
 
 def get_exchange_commission():
@@ -293,7 +324,7 @@ def get_exchange_commission():
     :return: 
     """
     result = get_data("/exchange/commission", )
-    print result
+
     Payment_history_transactions = namedtuple("Payment_history_transactions",
                                               "%s" % get_namedtuple(result))
 
