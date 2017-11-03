@@ -1,5 +1,6 @@
 import unittest
-from tradingbot.livecoin_api import get_exchange_ticker
+
+from tradingbot.ExchangersAPI.livecoin_api import get_exchange_ticker
 
 
 class TestLivecoinApi(unittest.TestCase):

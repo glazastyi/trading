@@ -4,9 +4,9 @@ import urllib
 import json
 import hashlib
 import hmac
-import config
+import tradingbot.config
 import time
-import support
+import tradingbot.support
 from collections import OrderedDict
 from collections import namedtuple
 
@@ -23,8 +23,8 @@ def get_data(method, *args):
     """
     time.sleep(1)
 
-    server = config.API_URl
-    keys = support.get_keys()
+    server = tradingbot.config.API_URl
+    keys = tradingbot.support.get_keys()
     api_key = keys[0]
     secret_key = keys[1]
 
@@ -52,8 +52,8 @@ def post_data(method, *args):
     :return: 
     """
     time.sleep(1)
-    server = config.API_URl
-    keys = support.get_keys()
+    server = tradingbot.config.API_URl
+    keys = tradingbot.support.get_keys()
     api_key = keys[0]
     secret_key = keys[1]
 
