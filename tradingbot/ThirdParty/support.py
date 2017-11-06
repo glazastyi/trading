@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
-import httplib
-import urllib
-import json
 import hashlib
 import hmac
-from collections import OrderedDict
-import config
-import time
-import database
+import httplib
+import json
 import os
+import time
+import urllib
+from collections import OrderedDict
+
+import tradingbot.config
+import tradingbot.database
 
 
 def get_data(method, *args):
@@ -19,7 +20,7 @@ def get_data(method, *args):
     """
     time.sleep(1)
 
-    server = config.API_URl
+    server = tradingbot.config.API_URl
     keys = get_keys()
     api_key = keys[0]
     secret_key = keys[1]
@@ -49,7 +50,7 @@ def post_data(method, *args):
     :return: 
     """
     time.sleep(1)
-    server = config.API_URl
+    server = tradingbot.config.API_URl
     keys = get_keys()
     api_key = keys[0]
     secret_key = keys[1]
@@ -108,7 +109,7 @@ def get_nonzero_balances():
     filtered_data = {}
     for el in data:
         if el["type"] == "total" and el["value"] != 0 and el[
-            "currency"] not in config.EXCLUSION_CURRENCY:
+            "currency"] not in tradingbot.config.EXCLUSION_CURRENCY:
             filtered_data["%s/BTC" % el["currency"]] = float(el["value"])
     return filtered_data
 
@@ -184,16 +185,16 @@ def make_order(type, pair,price,quantity):
     return order
 
 def get_purchase_price(value):
-    return round((value + config.OVER_BURSE) * (1 + config.COMMISSION),8)
+    return round((value + tradingbot.config.OVER_BURSE) * (1 + tradingbot.config.COMMISSION), 8)
 
 def get_sell_price(currency):
     tmp = get_data("/exchange/ticker",[("currencyPair", "%s/BTC" % currency)])
-    return round((float(tmp["best_ask"]) - config.OVER_BURSE) / (1 + config.COMMISSION),8)
+    return round((float(tmp["best_ask"]) - tradingbot.config.OVER_BURSE) / (1 + tradingbot.config.COMMISSION), 8)
 
 def get_sold_volume(currency, sell_price):
-    volume = database.select(["sum(purchased_quantity - sold_quantity)"],
-                    ["symbol == ", "purchase_price <=", "result == "],
-                    ("'%s/BTC'" % currency, sell_price / config.INCOME, 0))
+    volume = tradingbot.database.select(["sum(purchased_quantity - sold_quantity)"],
+                                        ["symbol == ", "purchase_price <=", "result == "],
+                                        ("'%s/BTC'" % currency, sell_price / tradingbot.config.INCOME, 0))
     if volume[0][0] == None:
         result = 0
     else:
@@ -201,8 +202,14 @@ def get_sold_volume(currency, sell_price):
     return result
 
 def get_num_of_pairs(balance):
-    result = config.NUMBER_OF_PAIRS
-    if balance / (10 ** (-4)) < config.NUMBER_OF_PAIRS:
+    result = tradingbot.config.NUMBER_OF_PAIRS
+    if balance / (10 ** (-4)) < tradingbot.config.NUMBER_OF_PAIRS:
         count = int(balance / (10 ** (-4)))
         result = count
     return result
+
+def get_main_dir():
+    return os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+def get_config_dir():
+    return os.path.join(get_main_dir(),"configs")

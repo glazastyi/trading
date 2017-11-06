@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
-import httplib
-import urllib
-import json
 import hashlib
 import hmac
-import tradingbot.config
+import httplib
+import json
 import time
-import tradingbot.support
+import urllib
 from collections import OrderedDict
 from collections import namedtuple
+
+import tradingbot.ThirdParty.support
+import tradingbot.config
 
 
 def get_namedtuple(result):
@@ -24,7 +25,7 @@ def get_data(method, *args):
     time.sleep(1)
 
     server = tradingbot.config.API_URl
-    keys = tradingbot.support.get_keys()
+    keys = tradingbot.ThirdParty.support.get_keys()
     api_key = keys[0]
     secret_key = keys[1]
 
@@ -53,7 +54,7 @@ def post_data(method, *args):
     """
     time.sleep(1)
     server = tradingbot.config.API_URl
-    keys = tradingbot.support.get_keys()
+    keys = tradingbot.ThirdParty.support.get_keys()
     api_key = keys[0]
     secret_key = keys[1]
 

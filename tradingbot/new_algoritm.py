@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import time
-import support
-import database
+
 import config
-import collections
+from tradingbot import database
+from tradingbot.ThirdParty import support
+
 
 def get_successful_orders(orders):
     return_orders = [[],[]]
@@ -40,11 +41,11 @@ def close_sell_orders(orders):
         sold_quantity = float(el[2])
         profit = float(el[3])
         remaining_quantity = purchased_quantity - sold_quantity
-        database.update(["sold_quantity", "profit","result"],
-                            (sold_quantity + quantity,
+        database.update(["sold_quantity", "profit", "result"],
+                        (sold_quantity + quantity,
                              profit + quantity * price,
                              int(remaining_quantity == quantity)),
-                            ["id == "], (el[0],))
+                        ["id == "], (el[0],))
 
 def close_buy_orders(orders):
     for order in orders:
@@ -90,7 +91,7 @@ def sell():
         if ((currency not in config.EXCLUSION_CURRENCY) and (el["type"] == "available")
             and (float(el["value"])) > 0):
             sell_price = support.get_sell_price(currency)
-            volume = support.get_sold_volume(currency,sell_price)
+            volume = support.get_sold_volume(currency, sell_price)
             order = support.make_order("sell", "%s/BTC" % currency, sell_price, volume)
             if order["success"]:
                 with open("orders_buffer.txt", "a") as file:

@@ -1,8 +1,10 @@
-import support
-import database
-import time
 import collections
+import time
+
 import config
+from tradingbot import database
+from tradingbot.ThirdParty import support
+
 
 def action():
     sell()
@@ -14,7 +16,7 @@ def buy():
     order = collections.namedtuple("order",
                                    ["id", "start_time", "symbol", "ask", "quantity", "end_time", "bid", "receipts",
                                     "result"])
-    current = [ order._make(el) for el in database.select()]
+    current = [order._make(el) for el in database.select()]
     exception = [el.symbol for el in current]
     difference = config.NUMBER_OF_PAIRS - len(current)
     print "dif = %d"%difference
@@ -36,7 +38,7 @@ def buy():
             symbol = el["symbol"]
             order_buy = support.make_order("buy", symbol, str(ask), quantity)
             if order_buy["success"]:
-                database.insert(int(order_buy["orderId"]),time.time(),symbol,str(ask),str(quantity))
+                database.insert(int(order_buy["orderId"]), time.time(), symbol, str(ask), str(quantity))
             print order_buy
 
 
@@ -60,7 +62,7 @@ def sell():
             order_sell = support.make_order("sell", el.symbol, str(sell_price), quantity_sell)
             if order_sell["success"]:
                 receipts = (sell_price - bought_price) * float(quantity_sell)
-                database.update(int(el.id), time.time(),sell_price,str(receipts))
+                database.update(int(el.id), time.time(), sell_price, str(receipts))
                 print order_sell
 
 

@@ -22,7 +22,7 @@ def insert(id, start_time, symbol, purchased_quantity, purchase_price):
     con.close()
 
 
-def update(params, param_values, conditions, cond_values):
+def update_database(params, param_values, conditions, cond_values):
     """
     
     :param params: 

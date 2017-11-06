@@ -1,0 +1,12 @@
+{
+  "API_URl" :  "api.livecoin.net",
+  "SATOSHI" : 0.00000001,
+  "NUMBER_OF_PAIRS": 20,
+  "INCOME" : 1.02,
+  "MAX_WAITING_TIME" : 129600,
+  "COMMISSION" : 0.0018,
+  "OVER_BURSE" :0.0000001,
+  "EXCLUSION_CURRENCY" : ["USD","RUR","EUR","BTC"],
+  "PERIOD" : 1200,
+  "DATABASE": "Livecoin_db"
+}
