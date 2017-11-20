@@ -8,8 +8,8 @@ import time
 import urllib
 from collections import OrderedDict
 
+import tradingbot.Databases.Sqlite3_API
 import tradingbot.config
-import tradingbot.database
 
 
 def get_data(method, *args):
@@ -192,9 +192,9 @@ def get_sell_price(currency):
     return round((float(tmp["best_ask"]) - tradingbot.config.OVER_BURSE) / (1 + tradingbot.config.COMMISSION), 8)
 
 def get_sold_volume(currency, sell_price):
-    volume = tradingbot.database.select(["sum(purchased_quantity - sold_quantity)"],
-                                        ["symbol == ", "purchase_price <=", "result == "],
-                                        ("'%s/BTC'" % currency, sell_price / tradingbot.config.INCOME, 0))
+    volume = tradingbot.Databases.Sqlite3_API.select(["sum(purchased_quantity - sold_quantity)"],
+                                                     ["symbol == ", "purchase_price <=", "result == "],
+                                                     ("'%s/BTC'" % currency, sell_price / tradingbot.config.INCOME, 0))
     if volume[0][0] == None:
         result = 0
     else:
@@ -213,3 +213,7 @@ def get_main_dir():
 
 def get_config_dir():
     return os.path.join(get_main_dir(),"configs")
+
+def get_data_dir(exchanger):
+    return os.path.join(get_main_dir(),"Data/{}.db".format(exchanger))
+

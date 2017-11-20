@@ -11,7 +11,7 @@ from collections import namedtuple
 import tradingbot.ThirdParty.support
 import tradingbot.config
 
-
+API_URl =  "api.livecoin.net"
 def get_namedtuple(result):
     return " ".join(map(str, set(result)))
 
@@ -24,7 +24,7 @@ def get_data(method, *args):
     """
     time.sleep(1)
 
-    server = tradingbot.config.API_URl
+    server = API_URl
     keys = tradingbot.ThirdParty.support.get_keys()
     api_key = keys[0]
     secret_key = keys[1]
@@ -53,7 +53,7 @@ def post_data(method, *args):
     :return: 
     """
     time.sleep(1)
-    server = tradingbot.config.API_URl
+    server = API_URl
     keys = tradingbot.ThirdParty.support.get_keys()
     api_key = keys[0]
     secret_key = keys[1]

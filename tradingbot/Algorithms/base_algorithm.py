@@ -3,7 +3,6 @@ import os
 import time
 
 from tradingbot.ThirdParty.support import get_config_dir
-from tradingbot.database import update_database
 
 
 class BaseAlghoritm(object):
@@ -31,7 +30,7 @@ class BaseAlghoritm(object):
        
     def close_orders(self):
         successful_orders = self._exchanger.get_successfull_orders()
-        update_database(successful_orders)
+        self._database.update_orders(successful_orders)
         self._exchanger.close_orders()
 
 

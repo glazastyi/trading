@@ -2,7 +2,7 @@
 import time
 
 import config
-from tradingbot import database
+from tradingbot.Databases import Sqlite3_API
 from tradingbot.ThirdParty import support
 
 
@@ -31,7 +31,7 @@ def close_sell_orders(orders):
         price = float(info["price"])
         cond = float(info["price"]) / config.INCOME
 
-        el = database.select(
+        el = Sqlite3_API.select(
             ["id", "purchased_quantity", "sold_quantity", "profit"],
             ["symbol == ", "result == "],
             ("'%s'" % symbol,0))
@@ -41,11 +41,11 @@ def close_sell_orders(orders):
         sold_quantity = float(el[2])
         profit = float(el[3])
         remaining_quantity = purchased_quantity - sold_quantity
-        database.update(["sold_quantity", "profit", "result"],
-                        (sold_quantity + quantity,
+        Sqlite3_API.update(["sold_quantity", "profit", "result"],
+                           (sold_quantity + quantity,
                              profit + quantity * price,
                              int(remaining_quantity == quantity)),
-                        ["id == "], (el[0],))
+                           ["id == "], (el[0],))
 
 def close_buy_orders(orders):
     for order in orders:
@@ -54,7 +54,7 @@ def close_buy_orders(orders):
 
         symbol = info["symbol"]
         price = float(info["price"])
-        database.insert(order, time.time(), symbol, quantity, price)
+        Sqlite3_API.insert(order, time.time(), symbol, quantity, price)
 
 def close_orders():
     with open("orders_buffer.txt", "r") as file:

@@ -4,7 +4,7 @@ import tradingbot.ExchangersAPI.livecoin_api as api
 class LivecoinExchanger(object):
     def __init__(self):
         self.opened_orders = {"sell":[], "buy":[]}
-        self.da
+
     def get_pairs(self):
         return api.get_exchange_ticker()
 
@@ -19,10 +19,11 @@ class LivecoinExchanger(object):
             api.post_exchange_cancel_limit(order.symbol, order.id)
 
     def get_successfull_orders(self,):
-        result = []
-        for order in self.opened_orders:
-            if order.remaining_quantity != order.quantity:
-                result.append(order)
+        result = {"sell":[], "buy":[]}
+        for mode in ["sell", "buy"]:
+            for order in self.opened_orders[mode]:
+                if order.remaining_quantity != order.quantity:
+                    result[mode].append(order)
 
         return result
 

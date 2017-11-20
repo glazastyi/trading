@@ -1,0 +1,30 @@
+{
+  "livecoin":[
+    {
+      "sell_buffer":[
+        {
+          "create":"CREATE TABLE SELL_BUFFER ()",
+          "insert": "INSERT INTO SELL_BUFFER VALUES()",
+          "select": "SELECT * FROM SELL_BUFFER WHERE SYMBOL == {}",
+          "delete": "DELETE FROM SELL_BUFFER WHERE SYMBOL == {}"
+        }
+      ],
+      "buy_buffer":[
+        {
+          "create":"CREATE TABLE SELL_BUFFER ()",
+          "insert": "INSERT INTO SELL_BUFFER VALUES()",
+          "select": "SELECT * FROM SELL_BUFFER WHERE SYMBOL == {}",
+          "delete": "DELETE FROM SELL_BUFFER WHERE SYMBOL == {}"
+        }
+      ],
+      "operations":[
+        {
+          "create":"CREATE TABLE SELL_BUFFER ()",
+          "insert": "INSERT INTO SELL_BUFFER VALUES()",
+          "select": "SELECT * FROM SELL_BUFFER WHERE SYMBOL == {}",
+          "delete": "DELETE FROM SELL_BUFFER WHERE SYMBOL == {}"
+        }
+      ]
+    }
+  ]
+}
