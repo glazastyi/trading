@@ -8,7 +8,7 @@ import urllib
 from collections import OrderedDict
 from collections import namedtuple
 
-import tradingbot.ThirdParty.support
+import tradingbot.ThirdParty.third_party
 import tradingbot.config
 
 API_URl =  "api.livecoin.net"
@@ -25,7 +25,7 @@ def get_data(method, *args):
     time.sleep(1)
 
     server = API_URl
-    keys = tradingbot.ThirdParty.support.get_keys()
+    keys = tradingbot.ThirdParty.third_party.get_keys()
     api_key = keys[0]
     secret_key = keys[1]
 
@@ -54,7 +54,7 @@ def post_data(method, *args):
     """
     time.sleep(1)
     server = API_URl
-    keys = tradingbot.ThirdParty.support.get_keys()
+    keys = tradingbot.ThirdParty.third_party.get_keys()
     api_key = keys[0]
     secret_key = keys[1]
 

@@ -2,7 +2,7 @@ import json
 import os
 import time
 
-from tradingbot.ThirdParty.support import get_config_dir
+from tradingbot.ThirdParty.third_party import get_config_dir
 
 
 class BaseAlghoritm(object):

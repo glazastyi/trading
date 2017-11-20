@@ -8,8 +8,7 @@ import time
 import urllib
 from collections import OrderedDict
 
-import tradingbot.Databases.Sqlite3_API
-import tradingbot.config
+
 
 
 def get_data(method, *args):

@@ -1,56 +1,62 @@
 from Sqlite3_API import Sqlite3
+import json
+class buy_table(Sqlite3):
+    def insert(self, order):
+        base_request = self.data[self.db_name][self.table_name]["insert"]
+        request = base_request.format(order.id, order.lastModificationTime,
+                                      order.currencyPair, order.price, order.quantity)
+        self.set_values(request)
+
+    def select(self, pair):
+        base_request = self.data[self.db_name][self.table_name]["select"]
+        request = base_request.format(pair)
+
+        return self.get_values(request)
+
+    def delete(self, pair):
+        base_request = self.data[self.db_name][self.table_name]["delete"]
+        request = base_request.format(pair)
+        self.set_values(request)
+
+class sell_table(Sqlite3):
+    def insert(self, order):
+        base_request = self.data[self.db_name][self.table_name]["insert"]
+        request = base_request.format(order.id, order.lastModificationTime,
+                                      order.currencyPair, order.price, order.quantity)
+        self.set_values(request)
+
+    def select(self, pair):
+        base_request = self.data[self.db_name][self.table_name]["select"]
+        request = base_request.format(pair)
+
+        return self.get_values(request)
+
+    def delete(self, pair):
+        base_request = self.data[self.db_name][self.table_name]["delete"]
+        request = base_request.format(pair)
+        self.set_values(request)
+
+class operations_table(Sqlite3):
+    def insert(self):
+        pass
+
+    def select(self):
+        pass
+
 
 class LivecoinDB(object):
-
-    def make_insert_request(self, order):
-        values =(order.id, order.lastModificationTime, order.symbol,
-                 order.quantity, order.price)
-        request = """INSERT INTO Orders 
-    				(id, start_time, symbol, purchased_quantity, purchase_price,
-    				 sold_quantity, profit, end_time, result)
-    				VALUES (%s, %s, "%s","%s","%s",0,0,0,0)"""%values
-
-        self.set_values(request)
-
-    def make_update_request(self, params, param_values, conditions,
-                            cond_values):
-        print  params, param_values, conditions, cond_values
-        mask = """update Orders set %s where %s"""
-        str_param = ""
-        str_cond = ""
-
-        for el in params:
-            str_param += "{} = %s,".format(el)
-        for el in conditions:
-            str_cond += "{} %s,".format(el)
-
-        request = mask % (str_param[:-1], str_cond[:-1]) % (
-        param_values + cond_values)
-
-        self.set_values(request)
-
-    def make_select_request(self, params, conditions, cond_values):
-        mask = """select %s from Orders where %s"""
-        str_param = ""
-        str_cond = ""
-
-        for el in params:
-            str_param += " {},".format(el)
-        for el in conditions:
-            str_cond += " {} %s and".format(el)
-
-        request = mask % (str_param[:-1], str_cond[:-3]) % (cond_values)
-
-        result = self.get_values(request)
-        return result
+    def __init__(self):
+        self.name = "livecoin"
+        self.buy_table = buy_table(self.name)
+        self.sell_table = sell_table(self.name)
+        self.operations_table = operations_table(self.name)
 
     def update_orders(self,orders):
-        modes = ["buy", "sell"]
-        for mode in modes:
-            for order in orders[mode]:
-                self.make_insert_request(self, order)
+        for order in orders["buy"]:
+            self.buy_table.insert(order)
+        for order in orders["sell"]:
+            self.sell_table.insert(order)
 
-
-
-
-
+    def join_buy_on_sell(self):
+        request = "Select symbol, count(quantity) from BUY_TABLE GROUP BY symbol"
+        return self.buy_table.get_values(request)

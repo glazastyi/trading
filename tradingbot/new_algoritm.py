@@ -3,7 +3,7 @@ import time
 
 import config
 from tradingbot.Databases import Sqlite3_API
-from tradingbot.ThirdParty import support
+from tradingbot.ThirdParty import third_party
 
 
 def get_successful_orders(orders):
@@ -11,7 +11,7 @@ def get_successful_orders(orders):
     for order in orders:
         type_of_order = order[:1]
         order_num = order[1:-1]
-        info = support.get_data("/exchange/order", [("orderId", order_num)])
+        info = third_party.get_data("/exchange/order", [("orderId", order_num)])
         quantity = float(info["quantity"]) - float(info["remaining_quantity"])
         if quantity > 0.0:
             return_orders[type_of_order == "S"].append(order_num)
@@ -24,7 +24,7 @@ def close_sell_orders(orders):
     :return: 
     """
     for order in orders:
-        info = support.get_data("/exchange/order", [("orderId", order)])
+        info = third_party.get_data("/exchange/order", [("orderId", order)])
         quantity = float(info["quantity"]) - float(info["remaining_quantity"])
 
         symbol = info["symbol"]
@@ -49,7 +49,7 @@ def close_sell_orders(orders):
 
 def close_buy_orders(orders):
     for order in orders:
-        info = support.get_data("/exchange/order", [("orderId", order)])
+        info = third_party.get_data("/exchange/order", [("orderId", order)])
         quantity = float(info["quantity"]) - float(info["remaining_quantity"])
 
         symbol = info["symbol"]
@@ -69,15 +69,15 @@ def close_orders():
 
 def buy():
     """Блок покупки"""
-    balance = float(support.get_balance("BTC"))
-    count  = support.get_num_of_pairs(balance)
-    pairs = support.get_pairs(count, [])
+    balance = float(third_party.get_balance("BTC"))
+    count  = third_party.get_num_of_pairs(balance)
+    pairs = third_party.get_pairs(count, [])
     part_of_bank = balance/count
     for el in pairs:
-        purchase_price = support.get_purchase_price(float(el["best_bid"]))
+        purchase_price = third_party.get_purchase_price(float(el["best_bid"]))
         quantity = part_of_bank / purchase_price
         symbol = el["symbol"]
-        order_buy = support.make_order("buy", symbol, str(purchase_price), quantity)
+        order_buy = third_party.make_order("buy", symbol, str(purchase_price), quantity)
 
         if order_buy["success"]:
             with open("orders_buffer.txt", "a") as file:
@@ -85,14 +85,14 @@ def buy():
 
 def sell():
 
-    pairs = support.get_data("/payment/balances", [])
+    pairs = third_party.get_data("/payment/balances", [])
     for el in pairs:
         currency = el["currency"]
         if ((currency not in config.EXCLUSION_CURRENCY) and (el["type"] == "available")
             and (float(el["value"])) > 0):
-            sell_price = support.get_sell_price(currency)
-            volume = support.get_sold_volume(currency, sell_price)
-            order = support.make_order("sell", "%s/BTC" % currency, sell_price, volume)
+            sell_price = third_party.get_sell_price(currency)
+            volume = third_party.get_sold_volume(currency, sell_price)
+            order = third_party.make_order("sell", "%s/BTC" % currency, sell_price, volume)
             if order["success"]:
                 with open("orders_buffer.txt", "a") as file:
                     file.write("S%s\n"%order["orderId"])

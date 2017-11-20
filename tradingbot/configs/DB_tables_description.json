@@ -1,30 +1,26 @@
 {
-  "livecoin":[
+  "livecoin":
     {
-      "sell_buffer":[
+      "sell_table":
         {
-          "create":"CREATE TABLE SELL_BUFFER ()",
-          "insert": "INSERT INTO SELL_BUFFER VALUES()",
-          "select": "SELECT * FROM SELL_BUFFER WHERE SYMBOL == {}",
-          "delete": "DELETE FROM SELL_BUFFER WHERE SYMBOL == {}"
-        }
-      ],
-      "buy_buffer":[
+          "create":"CREATE TABLE SELL_TABLE (id REAL, time REAL, symbol TEXT, price REAL, quantity REAL, state INT)",
+          "insert": "INSERT INTO SELL_TABLE VALUES({}, {},'{}', {}, {}, 0);",
+          "select": "SELECT * FROM SELL_TABLE WHERE symbol == '{}'",
+          "delete": "DELETE FROM SELL_TABLE WHERE symbol == '{}'"
+        },
+
+      "buy_table":
         {
-          "create":"CREATE TABLE SELL_BUFFER ()",
-          "insert": "INSERT INTO SELL_BUFFER VALUES()",
-          "select": "SELECT * FROM SELL_BUFFER WHERE SYMBOL == {}",
-          "delete": "DELETE FROM SELL_BUFFER WHERE SYMBOL == {}"
-        }
-      ],
-      "operations":[
-        {
-          "create":"CREATE TABLE SELL_BUFFER ()",
-          "insert": "INSERT INTO SELL_BUFFER VALUES()",
-          "select": "SELECT * FROM SELL_BUFFER WHERE SYMBOL == {}",
-          "delete": "DELETE FROM SELL_BUFFER WHERE SYMBOL == {}"
-        }
-      ]
+          "create":"CREATE TABLE BUY_TABLE (id REAL, time REAL, symbol TEXT, price REAL, quantity REAL, state INT)",
+          "insert": "INSERT INTO BUY_TABLE VALUES({},{},'{}',{},{}, 0)",
+          "select": "SELECT * FROM BUY_TABLE WHERE symbol == '{}'",
+          "delete": "DELETE FROM BUY_TABLE WHERE symbol == '{}'"
+        },
+      "operations_table": {
+        "create": "CREATE TABLE OPERATIONS_TABLE ()",
+        "insert": "INSERT INTO OPERATIONS_TABLE VALUES()",
+        "select": "SELECT * FROM OPERATIONS_TABLE WHERE symbol == '{}'",
+        "delete": "DELETE FROM OPERATIONS_TABLE WHERE symbol == '{}'"
+      }
     }
-  ]
 }
