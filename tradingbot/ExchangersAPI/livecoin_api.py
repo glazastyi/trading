@@ -5,13 +5,14 @@ import httplib
 import json
 import time
 import urllib
+import tradingbot.ThirdParty.third_party
+
 from collections import OrderedDict
 from collections import namedtuple
 
-import tradingbot.ThirdParty.third_party
-import tradingbot.config
+API_URl = "api.livecoin.net"
 
-API_URl =  "api.livecoin.net"
+
 def get_namedtuple(result):
     return " ".join(map(str, set(result)))
 
@@ -86,7 +87,7 @@ def get_exchange_ticker(*args):
     if len(args):
         result = [result]
 
-    Exchange_ticker = namedtuple("Exchange_ticker",get_namedtuple(result[0]))
+    Exchange_ticker = namedtuple("Exchange_ticker", get_namedtuple(result[0]))
 
     return map(lambda x: Exchange_ticker(**x), result)
 
@@ -121,7 +122,8 @@ def get_exchange_order_book(currency_pair, *args):
     result = get_data("/exchange/order_book", ("currencyPair",
                                                currency_pair), *args)
 
-    Exchange_order_book = namedtuple("Exchange_order_book", get_namedtuple(result))
+    Exchange_order_book = namedtuple("Exchange_order_book",
+                                     get_namedtuple(result))
 
     return map(lambda x: Exchange_order_book(**x), [result])
 
@@ -134,7 +136,8 @@ def get_exchange_all_order_book(*args):
     :return: 
     """
     data = get_data("/exchange/all/order_book", *args)
-    Exchange_all_order_book = namedtuple("Exchange_order_book", get_namedtuple(data.values()[0]))
+    Exchange_all_order_book = namedtuple("Exchange_order_book",
+                                         get_namedtuple(data.values()[0]))
     result = {}
     for currency in data:
         result[currency] = map(lambda x: Exchange_all_order_book(**x),
@@ -172,7 +175,7 @@ def get_exchange_restrictions(*args):
 def get_info_coin_info(*args):
     """
     возвращает общую информацию по критовалютам:
-        name - название
+        db_name - название
         symbol - символ
         walletStatus - статус кошелька
         normal - Кошелек работает нормально
@@ -191,7 +194,7 @@ def get_info_coin_info(*args):
     """
     data = get_data("/info/coinInfo", *args)
     info = data.get("info")
-    Info_coin_info = namedtuple("Info_coin_info",get_namedtuple(info[0]))
+    Info_coin_info = namedtuple("Info_coin_info", get_namedtuple(info[0]))
     result = map(lambda x: Info_coin_info(**x), info)
 
     return result
@@ -213,7 +216,7 @@ def get_exchange_trades(*args):
         result = [result]
 
     Exchange_trades = namedtuple("Exchange_trades",
-                                get_namedtuple(result[0]))
+                                 get_namedtuple(result[0]))
 
     return map(lambda x: Exchange_trades(**x), result)
 
@@ -262,7 +265,7 @@ def get_payment_balances(*args):
     """
     result = get_data("/payment/balances", *args)
 
-    Payment_balances = namedtuple("Payment_balances",get_namedtuple(result[0]))
+    Payment_balances = namedtuple("Payment_balances", get_namedtuple(result[0]))
 
     return map(lambda x: Payment_balances(**x), result)
 
@@ -290,7 +293,7 @@ def get_payment_history_transactions(start, end, *args):
                       ("end", end), *args)
 
     Payment_history_transactions = namedtuple("Payment_history_transactions",
-                                             get_namedtuple(result[0]))
+                                              get_namedtuple(result[0]))
 
     return map(lambda x: Payment_history_transactions(**x), result)
 
@@ -330,7 +333,7 @@ def get_exchange_commission_common_info():
 
     result = get_data("/exchange/commissionCommonInfo", )
     Exchange_commission_common_info = namedtuple("Payment_history_transactions",
-                                                get_namedtuple(result))
+                                                 get_namedtuple(result))
 
     return map(lambda x: Exchange_commission_common_info(**x), [result])
 
@@ -346,7 +349,7 @@ def post_exchange_buy_limit(currency_pair, price, quantity):
     result = post_data("/exchange/buylimit", ("currencyPair", currency_pair),
                        ("price", price), ("quantity", quantity))
     Post_exchange_buy_limit = namedtuple("Post_exchange_buylimit",
-                                        get_namedtuple(result))
+                                         get_namedtuple(result))
 
     return map(lambda x: Post_exchange_buy_limit(**x), [result])
 
@@ -364,7 +367,7 @@ def post_exchange_sell_limit(currency_pair, price, quantity):
     result = post_data("/exchange/selllimit", ("currencyPair", currency_pair),
                        ("price", price), ("quantity", quantity))
     Post_exchange_sell_limit = namedtuple("Post_exchange_buylimit",
-                                         get_namedtuple(result))
+                                          get_namedtuple(result))
 
     return map(lambda x: Post_exchange_sell_limit(**x), [result])
 

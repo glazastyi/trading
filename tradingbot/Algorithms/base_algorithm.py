@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import json
 import os
 import time
@@ -6,14 +7,10 @@ from tradingbot.ThirdParty.third_party import get_config_dir
 
 
 class BaseAlghoritm(object):
-    def __init__(self, exchanger, decider, database, config_file):
+    def __init__(self, exchanger, decider, config_file):
         self._exchanger = exchanger
         self._decider = decider
-        self._database = database
         self.config_file = os.path.join(get_config_dir(), config_file)
-        self.set_config()
-
-    def set_config(self):
 
         with open(self.config_file) as config:
             data = json.load(config)
@@ -29,21 +26,23 @@ class BaseAlghoritm(object):
         self._period = data["PERIOD"]
        
     def close_orders(self):
-        successful_orders = self._exchanger.get_successfull_orders()
-        self._database.update_orders(successful_orders)
+        self._exchanger.update_orders()
         self._exchanger.close_orders()
-
 
     def buy_pairs(self):
         all_pairs = self._exchanger.get_pairs()
-        current_pairs = self._exchanger.get_balances()
-        pairs_to_buy = self._decider.get_solution(self, all_pairs, current_pairs)
+        balance = self._exchanger.get_btc_balance()
+        current_pairs = self._exchanger.get_current_pairs()
+
+        pairs_to_buy = self._decider.get_solution(balance,
+                                                  all_pairs, current_pairs,
+                                                  self._exclusion_currency)
+
         self._exchanger.make_buy_orders(pairs_to_buy)
 
     def sell_pairs(self):
-        current_pairs = self._database.get_sell_pairs(self)
+        current_pairs = self._exchanger.get_sell_pairs()
         self._exchanger.make_sell_orders(current_pairs)
-
 
     def run(self):
         while True:
@@ -51,5 +50,3 @@ class BaseAlghoritm(object):
             self.sell_pairs()
             self.buy_pairs()
             time.sleep(self._period)
-
-test = BaseAlghoritm("foo","bla","livecoin_config.json")

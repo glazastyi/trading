@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from tradingbot.Databases.livecoin_table import LivecoinDB
+from tradingbot.Databases.livecoin_warehouse import LivecoinDB
 class Order(object):
     def __init__(self, x):
         self.id = x
@@ -10,6 +10,5 @@ class Order(object):
         self.state = 0
 
 tmp = LivecoinDB()
-[tmp.buy_table.insert(Order(x)) for x in range(10)]
-print(tmp.buy_table.select("foo/tmp"))
-print(tmp.join_buy_on_sell())
+tmp.operations_table.insert(1,1,1)
+print tmp.operations_table.select("1")
