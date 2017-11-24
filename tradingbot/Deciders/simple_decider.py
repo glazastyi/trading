@@ -2,9 +2,27 @@
 from tradingbot.Utils.Structures import BufferPair
 from tradingbot.ExchangersAPI.livecoin_api import get_exchange_ticker
 
+
 class SimpleDecider(object):
+    """Простейший класс для принятия решений о покупке.
+    Данный класс принимает решение о покупке исходя из текущего спреда и
+    объема торгов данной валюты. Для этого выстраивается рейтинг валют 
+    из которого извлекаются валюты занимающие определенные позиции(в зависимости
+    от конфигурации)
+    Решение о продаже валют принимается либо при достижении оределенного 
+    уровня прибыли лиюо по истечении определенного срока
+    """
+
     def __init__(self, exclusion_currency, comission, min_bid,
                  start_pair, max_number_of_pairs, income):
+        """
+        :param exclusion_currency:  Валютные пары которые не участвуют в торгах
+        :param comission: комиссия, которую берет биржа
+        :param min_bid: минимальная цена на валюту
+        :param start_pair: 
+        :param max_number_of_pairs: 
+        :param income: 
+        """
         self.exclusion_currency = exclusion_currency
         self.comission = comission
         self.min_bid = min_bid
@@ -36,12 +54,26 @@ class SimpleDecider(object):
                                         self.get_quantity(x)), correct_pairs)
 
     def set_small_balance(self):
+        """
+        Настройка объема Базовой валюты, выделенной для покупки каждой пары
+        :return: None
+        """
         self.small_balance = self.balance / self.number_of_pairs
 
     def get_quantity(self, pair):
+        """
+        Вычисление объема покупаемой валюты с учетом комиссии
+        :param pair: Валютная пара
+        :return: 
+        """
         return self.small_balance / (pair.price * (1 + self.comission))
 
     def set_number_of_pairs(self, ):
+        """
+        Настройка количества покупаемых валют в зависимости от минимального
+        для каждой валютной пары
+        :return: 
+        """
         result = self.max_number_of_pairs
         if self.balance / self.min_bid * 200 < self.max_number_of_pairs:
             result = int(self.balance / (self.min_bid * 200))
@@ -72,8 +104,13 @@ class SimpleDecider(object):
         return correct_pairs[self.start_pair: end_pair]
 
     def get_sell_solution(self, pairs):
-        #todo: это полное дерьмо
-        #todo: формула для best ask
+        """
+        Принятие решения о продаже валютных пар
+        :param pairs: 
+        :return: 
+        """
+        # todo: это полное дерьмо
+        # todo: формула для best ask
         result = []
         for pair in pairs:
             cur_value = get_exchange_ticker(pair.symbol)
@@ -82,6 +119,7 @@ class SimpleDecider(object):
                                          cur_value["best_ask"] - 10 ** 7,
                                          pair.quantity))
         return result
+
 
 def get_rank(el):
     # todo: проверить формулу
