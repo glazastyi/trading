@@ -1,14 +1,9 @@
 # -*- coding: utf-8 -*-
-from tradingbot.Databases.livecoin_warehouse import LivecoinDB
-class Order(object):
-    def __init__(self, x):
-        self.id = x
-        self.lastModificationTime = x
-        self.currencyPair = str(x)
-        self.price = x
-        self.quantity = x
-        self.state = 0
+from tradingbot.Algorithms.base_algorithm import BaseAlghoritm
+from tradingbot.Exchangers.livecoin_exchanger import LivecoinExchanger
+from tradingbot.Deciders.simple_decider import SimpleDecider
 
-tmp = LivecoinDB()
-tmp.operations_table.insert(1,1,1)
-print tmp.operations_table.select("1")
+
+tmp = BaseAlghoritm(LivecoinExchanger(), SimpleDecider, "livecoin_config.json")
+
+tmp.run()

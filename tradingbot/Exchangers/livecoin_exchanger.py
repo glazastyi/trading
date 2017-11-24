@@ -18,7 +18,11 @@ class LivecoinExchanger(object):
 
     @staticmethod
     def get_btc_balance():
-        return api.get_payment_balance("BTC")
+        result = 0
+        for element in api.get_payment_balance("BTC"):
+            if element.type == "available":
+                result = element.value
+        return result
 
     def get_current_pairs(self):
         return self.DB.get_current_pairs()
@@ -45,8 +49,7 @@ class LivecoinExchanger(object):
 
         return result
 
-    def get_sell_pairs(self):
-        return self.DB.get_sell_pairs()
+
 
     def update_opened_orders(self):
         for key in self.opened_orders.keys():
@@ -64,7 +67,7 @@ class LivecoinExchanger(object):
     def append_opened_order(self, mode, order):
         self.opened_orders[mode].append(api.get_exchange_order(order))
 
-    def make_sell_order(self, pairs_to_sell):
+    def make_sell_orders(self, pairs_to_sell):
         for pair in pairs_to_sell:
             order = api.post_exchange_sell_limit(pair.symbol, pair.price,
                                                  pair.quantity)

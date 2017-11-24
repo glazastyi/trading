@@ -13,9 +13,9 @@ def get_keys():
     Functions return secret keys for stock exchange
     return: keys
     """
-    project_dir = os.path.dirname(__file__)
 
-    with open(os.path.join(project_dir,"keys.txt"), 'r') as keys_file:
+
+    with open(os.path.join(get_config_dir(),"keys.txt"), "r") as keys_file:
         keys = keys_file.readlines()
         keys[0] = keys[0][:-1]
 

@@ -24,8 +24,9 @@ class BaseAlghoritm(object):
         self._period = data["PERIOD"]
         self._start_pair = data["START_PAIR"]
 
-        self._decider = decider(self._exclusion_currency, self._number_of_pairs,
-                                100 * self._satoshi, self._start_pair)
+        self._decider = decider(self._exclusion_currency, self._commission,
+                                self._number_of_pairs,100 * self._satoshi,
+                                self._start_pair,self._income)
        
     def close_orders(self):
         self._exchanger.update_orders()
@@ -36,14 +37,15 @@ class BaseAlghoritm(object):
         balance = self._exchanger.get_btc_balance()
         current_pairs = self._exchanger.get_current_pairs()
 
-        pairs_to_buy = self._decider.get_solution(balance,
-                                                  all_pairs, current_pairs)
+        pairs_to_buy = self._decider.get_buy_solution(balance,
+                                                      all_pairs, current_pairs)
 
         self._exchanger.make_buy_orders(pairs_to_buy)
 
     def sell_pairs(self):
-        current_pairs = self._exchanger.get_sell_pairs()
-        self._exchanger.make_sell_orders(current_pairs)
+        current_pairs = self._exchanger.get_current_pairs()
+        pairs_to_sell = self._decider.get_sell_solution(current_pairs)
+        self._exchanger.make_sell_orders(pairs_to_sell)
 
     def run(self):
         while True:
