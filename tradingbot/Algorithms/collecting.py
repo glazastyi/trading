@@ -17,6 +17,8 @@ class Collecting(object):
 
     def collecting(self):
         df = pd.DataFrame(self.exchanger.get_pairs())
+        df["time"] = time.ctime()
+        print df.columns
         df.to_csv(get_data_dir2()+"collecting.csv", mode = "a", index = False)
 
     def get_data(self):
