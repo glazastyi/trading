@@ -7,7 +7,7 @@
   "COMMISSION" : 0.0018,
   "OVER_BURSE" :0.0000001,
   "EXCLUSION_CURRENCY" : ["USD","RUR","EUR","BTC"],
-  "PERIOD" : 1200,
+  "PERIOD" : 60,
   "DATABASE": "Livecoin_db",
   "START_PAIR": 15
 }

@@ -64,7 +64,7 @@ class LivecoinExchanger(object):
         result = {"sell": [], "buy": []}
         for mode in self.opened_orders.keys():
             for order in self.opened_orders[mode]:
-                if order.remaining_quantity != order.quantity:
+                if order["remaining_quantity"] != order["quantity"]:
                     result[mode].append(order)
 
         return result
@@ -87,14 +87,14 @@ class LivecoinExchanger(object):
         """
         self.DB.update_orders(self.get_successfull_orders())
 
-    def append_opened_order(self, mode, order):
+    def append_opened_order(self, mode, orderId):
         """
         Добавляет новый ордер в словарь
         :param mode: тип ордела(buy,sell)
         :param order: 
         :return: 
         """
-        self.opened_orders[mode].append(api.get_exchange_order(order))
+        self.opened_orders[mode].append(api.get_exchange_order(orderId)[0])
 
     def make_sell_orders(self, pairs_to_sell):
         """
@@ -105,7 +105,7 @@ class LivecoinExchanger(object):
         for pair in pairs_to_sell:
             order = api.post_exchange_sell_limit(pair.symbol, pair.price,
                                                  pair.quantity)
-            self.append_opened_order("sell", order)
+            self.append_opened_order("sell", order[0].orderId)
 
     def make_buy_orders(self, pairs_to_buy):
         """
@@ -113,7 +113,10 @@ class LivecoinExchanger(object):
         :param pairs_to_buy: 
         :return: 
         """
+        #todo: не хочу чтобы был лист
         for pair in pairs_to_buy:
             order = api.post_exchange_buy_limit(pair.symbol, pair.price,
                                                 pair.quantity)
-            self.append_opened_order("buy", order)
+            print "order",order
+            self.append_opened_order("buy", order[0].orderId)
+

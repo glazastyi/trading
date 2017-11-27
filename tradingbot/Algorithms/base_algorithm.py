@@ -33,14 +33,15 @@ class BaseAlghoritm(object):
         self._start_pair = data["START_PAIR"]
 
         self._decider = decider(self._exclusion_currency, self._commission,
-                                self._number_of_pairs, 100 * self._satoshi,
-                                self._start_pair, self._income)
+                                 100 * self._satoshi, self._start_pair,
+                                self._number_of_pairs, self._income)
 
     def close_orders(self):
         """
         Функция закрытия открытых на бирже ордеров
         :return: None
         """
+        print "close orders"
         self._exchanger.update_orders()
         self._exchanger.close_orders()
 
@@ -75,7 +76,9 @@ class BaseAlghoritm(object):
         :return: 
         """
         while True:
+            print "start"
             self.close_orders()
             self.sell_pairs()
             self.buy_pairs()
+            print" finish"
             time.sleep(self._period)

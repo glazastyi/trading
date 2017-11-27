@@ -28,7 +28,9 @@ def get_data(method, *args):
     server = API_URl
     keys = tradingbot.ThirdParty.third_party.get_keys()
     api_key = keys[0]
+
     secret_key = keys[1]
+
 
     data = OrderedDict(args)
 
@@ -246,9 +248,9 @@ def get_exchange_order(order_id):
     :param order_id: 
     :return: 
     """
-    result = get_data("/exchange/trades", ("ordeId", order_id))
+    result = get_data("/exchange/order", ("orderId", order_id))
 
-    Exchange_order = namedtuple("Exchange_order", get_namedtuple(result[0]))
+    Exchange_order = namedtuple("Exchange_order", get_namedtuple(result))
 
     return map(lambda x: Exchange_order(**x), [result])
 
@@ -346,8 +348,10 @@ def post_exchange_buy_limit(currency_pair, price, quantity):
     :param quantity: 
     :return: 
     """
+    print currency_pair, price, quantity
     result = post_data("/exchange/buylimit", ("currencyPair", currency_pair),
                        ("price", price), ("quantity", quantity))
+
     Post_exchange_buy_limit = namedtuple("Post_exchange_buylimit",
                                          get_namedtuple(result))
 

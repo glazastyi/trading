@@ -50,14 +50,16 @@ class SimpleDecider(object):
         self.set_number_of_pairs()
         self.set_small_balance()
         correct_pairs = self.get_correct_pairs()
-        return map(lambda x: BufferPair(x.symbol, x.price,
-                                        self.get_quantity(x)), correct_pairs)
 
+        result =  map(lambda x: BufferPair(x.symbol, x.best_bid + (10 ** (-7)),
+                                        self.get_quantity(x)), correct_pairs)
+        return result
     def set_small_balance(self):
         """
         Настройка объема Базовой валюты, выделенной для покупки каждой пары
         :return: None
         """
+
         self.small_balance = self.balance / self.number_of_pairs
 
     def get_quantity(self, pair):
@@ -66,9 +68,9 @@ class SimpleDecider(object):
         :param pair: Валютная пара
         :return: 
         """
-        return self.small_balance / (pair.price * (1 + self.comission))
+        return self.small_balance / ((pair.best_bid + 10 ** (-7)) * (1 + self.comission))
 
-    def set_number_of_pairs(self, ):
+    def set_number_of_pairs(self):
         """
         Настройка количества покупаемых валют в зависимости от минимального
         для каждой валютной пары
@@ -76,7 +78,7 @@ class SimpleDecider(object):
         """
         result = self.max_number_of_pairs
         if self.balance / self.min_bid * 200 < self.max_number_of_pairs:
-            result = int(self.balance / (self.min_bid * 200))
+            result = float(self.balance / (self.min_bid * 200))
         self.number_of_pairs = result
 
     def get_correct_pairs(self):
@@ -86,10 +88,13 @@ class SimpleDecider(object):
         необходимо докупить
         :return: 
         """
+
         pairs = [el for el in self.all_pairs if
                  "/BTC" in el.symbol and el.best_bid > self.min_bid]
+
         pairs = sorted(pairs, key=lambda element: get_rank(element),
                        reverse=True)
+
 
         current_symbols = [el.symbol for el in self.current_pairs
                            if el.quantity < 100 * self.min_bid]
@@ -99,9 +104,9 @@ class SimpleDecider(object):
                          el.symbol not in self.exclusion_currency and
                          float(el.best_ask) / float(el.best_bid) > 1.5]
 
-        end_pair = self.start_pair + self.number_of_pairs
+        #end_pair = self.start_pair + self.number_of_pairs
 
-        return correct_pairs[self.start_pair: end_pair]
+        return correct_pairs
 
     def get_sell_solution(self, pairs):
         """
@@ -130,3 +135,6 @@ def get_rank(el):
     """
     return ((float(el.best_ask) / float(el.best_bid) - 1)
             * float(el.volume) * float(el.vwap))
+def set_buy_price(x):
+
+        return x.best_bid + 10 ** (-7)
