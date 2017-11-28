@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from Sqlite3_API import Sqlite3DB, SqLite3Table
 from tradingbot.Utils.Structures import BufferPair
-
+import time
 
 class BufferTable(SqLite3Table):
     """
@@ -14,9 +14,9 @@ class BufferTable(SqLite3Table):
         :param order: 
         :return: 
         """
-        base_request = self.data[self.db_name][self.table_name]["insert"]
-        request = base_request.format(order.id, order.lastModificationTime,
-                                      order.currencyPair, order.price,
+        base_request = self.data[self.table_name]["insert"]
+        request = base_request.format(order.id, time.time(),
+                                      order.symbol, order.price,
                                       order.quantity)
         self.set_values(request)
 
@@ -131,5 +131,13 @@ class LivecoinDB(Sqlite3DB):
                """
         # todo: исправить запрос на корректный
         base_request = self.data["get_current_pairs"]
+        print "get cur pairs"
         return map(lambda x: BufferPair(x[0], x[1], x[2]),
                    self.get_values(base_request))
+
+    def add_to_operations(self,symbol):
+        print "add to operations {}".format(symbol)
+        self.set_values(self.data["add_to_operations"].format(symbol))
+        self.set_values(self.data["buy_table"]["delete"].format(symbol))
+        self.set_values(self.data["sell_table"]["delete"].format(symbol))
+        

@@ -53,6 +53,9 @@ class SimpleDecider(object):
 
         result =  map(lambda x: BufferPair(x.symbol, x.best_bid + (10 ** (-7)),
                                         self.get_quantity(x)), correct_pairs)
+        for element in result:
+            print "decide to buy", element.symbol, element.quantity
+
         return result
     def set_small_balance(self):
         """
@@ -60,7 +63,7 @@ class SimpleDecider(object):
         :return: None
         """
 
-        self.small_balance = self.balance / self.number_of_pairs
+        self.small_balance = self.balance / self.number_of_pairs - 10 ** (-8)
 
     def get_quantity(self, pair):
         """
@@ -79,7 +82,7 @@ class SimpleDecider(object):
         result = self.max_number_of_pairs
         if self.balance / self.min_bid * 200 < self.max_number_of_pairs:
             result = float(self.balance / (self.min_bid * 200))
-        self.number_of_pairs = result
+        self.number_of_pairs = max(0, result - len(self.current_pairs))
 
     def get_correct_pairs(self):
         """
@@ -95,18 +98,19 @@ class SimpleDecider(object):
         pairs = sorted(pairs, key=lambda element: get_rank(element),
                        reverse=True)
 
-
+        #todo: откорректировать эту функцию
         current_symbols = [el.symbol for el in self.current_pairs
-                           if el.quantity < 100 * self.min_bid]
+                           if el.quantity > 100 * self.min_bid]
+
 
         correct_pairs = [el for el in pairs
                          if el.symbol not in current_symbols and
                          el.symbol not in self.exclusion_currency and
-                         float(el.best_ask) / float(el.best_bid) > 1.5]
+                         float(el.best_ask) / float(el.best_bid) < 1.5]
 
-        #end_pair = self.start_pair + self.number_of_pairs
+        end_pair = self.start_pair + self.number_of_pairs
 
-        return correct_pairs
+        return correct_pairs[self.start_pair:end_pair]
 
     def get_sell_solution(self, pairs):
         """
@@ -118,10 +122,11 @@ class SimpleDecider(object):
         # todo: формула для best ask
         result = []
         for pair in pairs:
-            cur_value = get_exchange_ticker(pair.symbol)
-            if cur_value["best_ask"] >= pair.price * self.income:
+            cur_value = get_exchange_ticker(("currencyPair",pair.symbol))[0]
+            if cur_value.best_ask >= pair.price * self.income and \
+                (cur_value.best_ask - 10 ** 7) * pair.quantity > 10 ** (-5):
                 result.append(BufferPair(pair.symbol,
-                                         cur_value["best_ask"] - 10 ** 7,
+                                         cur_value.best_ask - 10 ** 7,
                                          pair.quantity))
         return result
 

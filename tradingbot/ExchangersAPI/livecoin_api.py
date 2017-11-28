@@ -248,11 +248,12 @@ def get_exchange_order(order_id):
     :param order_id: 
     :return: 
     """
+    #todo:костыль на костыле
     result = get_data("/exchange/order", ("orderId", order_id))
 
     Exchange_order = namedtuple("Exchange_order", get_namedtuple(result))
 
-    return map(lambda x: Exchange_order(**x), [result])
+    return map(lambda x: Exchange_order(**x), [result])[0]
 
 
 def get_payment_balances(*args):
@@ -355,7 +356,7 @@ def post_exchange_buy_limit(currency_pair, price, quantity):
     Post_exchange_buy_limit = namedtuple("Post_exchange_buylimit",
                                          get_namedtuple(result))
 
-    return map(lambda x: Post_exchange_buy_limit(**x), [result])
+    return map(lambda x: Post_exchange_buy_limit(**x), [result])[0]
 
 
 def post_exchange_sell_limit(currency_pair, price, quantity):
@@ -373,7 +374,7 @@ def post_exchange_sell_limit(currency_pair, price, quantity):
     Post_exchange_sell_limit = namedtuple("Post_exchange_buylimit",
                                           get_namedtuple(result))
 
-    return map(lambda x: Post_exchange_sell_limit(**x), [result])
+    return map(lambda x: Post_exchange_sell_limit(**x), [result])[0]
 
 
 def post_exchange_buy_market(currency_pair, quantity):

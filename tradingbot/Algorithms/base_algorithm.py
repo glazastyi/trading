@@ -42,8 +42,20 @@ class BaseAlghoritm(object):
         :return: None
         """
         print "close orders"
+        self._exchanger.get_orders()
         self._exchanger.update_orders()
+        self._exchanger.add_to_operations()
         self._exchanger.close_orders()
+    def sell_pairs(self):
+        """
+        Функция с помощью модуля принятия решений вычисляет валютные пары
+        пригодные для продажи и выставляет ордера на их продажу 
+        :return: 
+        """
+        print "sell pairs"
+        current_pairs = self._exchanger.get_current_pairs()
+        pairs_to_sell = self._decider.get_sell_solution(current_pairs)
+        self._exchanger.make_sell_orders(pairs_to_sell)
 
     def buy_pairs(self):
         """
@@ -51,6 +63,7 @@ class BaseAlghoritm(object):
         для покупки валютные пары и выставляет ордера на их покупку 
         :return: None
         """
+        print "buy pairs"
         all_pairs = self._exchanger.get_pairs()
         balance = self._exchanger.get_btc_balance()
         current_pairs = self._exchanger.get_current_pairs()
@@ -59,16 +72,9 @@ class BaseAlghoritm(object):
                                                       all_pairs, current_pairs)
 
         self._exchanger.make_buy_orders(pairs_to_buy)
+        self._exchanger.set_orders()
 
-    def sell_pairs(self):
-        """
-        Функция с помощью модуля принятия решений вычисляет валютные пары
-        пригодные для продажи и выставляет ордера на их продажу 
-        :return: 
-        """
-        current_pairs = self._exchanger.get_current_pairs()
-        pairs_to_sell = self._decider.get_sell_solution(current_pairs)
-        self._exchanger.make_sell_orders(pairs_to_sell)
+
 
     def run(self):
         """
@@ -80,5 +86,10 @@ class BaseAlghoritm(object):
             self.close_orders()
             self.sell_pairs()
             self.buy_pairs()
+
             print" finish"
             time.sleep(self._period)
+
+
+
+
