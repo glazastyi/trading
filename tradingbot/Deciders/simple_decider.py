@@ -48,13 +48,15 @@ class SimpleDecider(object):
         self.all_pairs = all_pairs
         self.current_pairs = current_pairs
         self.set_number_of_pairs()
-        self.set_small_balance()
-        correct_pairs = self.get_correct_pairs()
+        result = []
+        if self.number_of_pairs:
+            self.set_small_balance()
+            correct_pairs = self.get_correct_pairs()
 
-        result =  map(lambda x: BufferPair(x.symbol, x.best_bid + (10 ** (-7)),
-                                        self.get_quantity(x)), correct_pairs)
-        for element in result:
-            print "decide to buy", element.symbol, element.quantity
+            result =  map(lambda x: BufferPair(x.symbol, x.best_bid + (10 ** (-7)),
+                                            self.get_quantity(x)), correct_pairs)
+            for element in result:
+                print "decide to buy", element.symbol, element.quantity
 
         return result
     def set_small_balance(self):

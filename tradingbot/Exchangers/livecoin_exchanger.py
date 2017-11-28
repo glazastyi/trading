@@ -72,6 +72,7 @@ class LivecoinExchanger(object):
         for mode in self.opened_orders.keys():
             for order in self.opened_orders[mode]:
                 if order.remaining_quantity != order.quantity:
+                    print "append", order
                     result[mode].append(order)
 
         return result
@@ -81,7 +82,6 @@ class LivecoinExchanger(object):
         Функция обновляет значения в открытых ордерах
         :return: 
         """
-        # todo: не очень понятно что эта функция делает
         for key in self.opened_orders.keys():
             self.opened_orders[key] = map(lambda x:
                                           api.get_exchange_order(x.id),

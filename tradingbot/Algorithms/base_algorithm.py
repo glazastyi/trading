@@ -42,7 +42,6 @@ class BaseAlghoritm(object):
         :return: None
         """
         print "close orders"
-        self._exchanger.get_orders()
         self._exchanger.update_orders()
         self._exchanger.add_to_operations()
         self._exchanger.close_orders()
@@ -72,7 +71,7 @@ class BaseAlghoritm(object):
                                                       all_pairs, current_pairs)
 
         self._exchanger.make_buy_orders(pairs_to_buy)
-        self._exchanger.set_orders()
+
 
 
 
@@ -83,9 +82,11 @@ class BaseAlghoritm(object):
         """
         while True:
             print "start"
+            self._exchanger.get_orders()
             self.close_orders()
             self.sell_pairs()
             self.buy_pairs()
+            self._exchanger.set_orders()
 
             print" finish"
             time.sleep(self._period)
