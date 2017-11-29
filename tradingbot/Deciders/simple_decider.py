@@ -129,11 +129,11 @@ class SimpleDecider(object):
             print "buy={} now={} ratio = {}".\
                 format(pair.price,cur_value.best_ask,
                          cur_value.best_ask / pair.price)
-            print "quant ",(cur_value.best_ask + 10 ** (-7)) * pair.quantity
+            print "quant ",(cur_value.best_ask - 10 ** (-7)) * pair.quantity
             if cur_value.best_ask >= pair.price * self.income and \
-                (cur_value.best_ask + 10 ** (-7)) * pair.quantity > 10 ** (-5):
+                (cur_value.best_ask - 10 ** (-7)) * pair.quantity > 10 ** (-5):
                 result.append(BufferPair(pair.symbol,
-                                         cur_value.best_ask + 10 ** (-7),
+                                         cur_value.best_ask - 10 ** (-7),
                                          pair.quantity))
         return result
 
