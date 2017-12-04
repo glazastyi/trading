@@ -125,13 +125,18 @@ class SimpleDecider(object):
         result = []
         for pair in pairs:
             cur_value = get_exchange_ticker(("currencyPair",pair.symbol))[0]
+
             print "symbol {}".format(pair.symbol)
-            print "buy={} now={} ratio = {}".\
+            print "buy={} now={} ratio = {} quantiy = {}".\
                 format(pair.price,cur_value.best_ask,
-                         cur_value.best_ask / pair.price)
+                         cur_value.best_ask / pair.price,
+                       pair.quantity)
             print "quant ",(cur_value.best_ask - 10 ** (-7)) * pair.quantity
-            if cur_value.best_ask >= pair.price * self.income and \
-                (cur_value.best_ask - 10 ** (-7)) * pair.quantity > 10 ** (-5):
+
+            if (cur_value.best_ask >= pair.price * self.income or
+                cur_value.best_ask / pair.price < 0.5) and \
+                (cur_value.best_ask - 10 ** (-7)) * pair.quantity > 10 ** (-4)\
+                :
                 result.append(BufferPair(pair.symbol,
                                          cur_value.best_ask - 10 ** (-7),
                                          pair.quantity))

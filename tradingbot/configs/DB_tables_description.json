@@ -19,6 +19,6 @@
       "delete": "DELETE FROM OPERATIONS_TABLE WHERE symbol == '{}'"
     },
     "get_current_pairs": "select t1.symbol,t1.price,case when t2.quantity is NULL then t1.quantity else t1.quantity - t2.quantity end quantity from (select * from BUY_TABLE  GROUP BY symbol) as t1 left join (select * from SELL_TABLE GROUP BY symbol) as t2 on t1.symbol = t2.symbol;",
-    "add_to_operations": "select t2.time, t1.symbol, t1.quantity * (t2.price - t1.price) from (select * from BUY_TABLE where symbol == {} GROUP BY symbol) as t1,(select * from SELL_TABLE GROUP BY symbol) where t2.symbol == t1.symbol "
+    "add_to_operations": "INSERT INTO OPERATIONS_TABLE select t2.time, t1.symbol, t1.quantity * (t2.price - t1.price) from (select * from BUY_TABLE where symbol == '{}' GROUP BY symbol) as t1,(select * from SELL_TABLE GROUP BY symbol) as t2 where t2.symbol == t1.symbol "
   }
 }
