@@ -10,7 +10,7 @@ setup(
     url="https://github.com/glazastyi/trading",
     license="MIT",
     packages=[
-        "tradingbot",
+        "trading",
     ],
     install_requires=[
         "sqlite3",
